@@ -1,0 +1,213 @@
+---
+title: "武汉地区气象数据对新型冠状病毒肺炎疫情的影响分析"
+author: " The One: 张晓蕊 刘光子 曹雪娇 李雪丽 刘颖"
+date: "2020/5/15"
+output:
+  ioslides_presentation:
+    smaller: true
+    widecreen: true
+---
+## 
+
+</br>
+</br>
+<font size=7>
+1 研究背景  
+</font>
+
+</br>
+</br>
+<font size=7>
+2 文献综述    
+</font>
+
+</br>
+</br>
+<font size=7>
+3 描述性统计   
+</font>
+
+</br>
+</br>
+<font size=7>
+4 相关分析      
+</font>
+
+</br>
+</br>
+<font size=7>
+5 GAM模型       
+</font>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+# 1 研究背景
+
+## 研究背景
+
+<font size=5.5>
+&emsp;&emsp;2019年12月，湖北省武汉市爆发新型冠状病毒肺炎（COVID-19），此后该疾病伴随春运客流在短时间内迅速蔓延到其他省份乃至周边国家，各地疑似和确诊病例数急速增加。在2020年第一季，新型冠状病毒肺炎在在世界范围内广泛传播，对公共卫生和世界经济产生了重大影响，引起了国内外的高度重视。
+</font>
+
+<font size=5.5>
+&emsp;&emsp;传染病的发生、传播、流行与气象条件和空气污染密切相关。特定的气象条件对呼吸道疾病有一定的诱发作用，病毒的活跃程度和扩散能力与气温、气压、湿度、风速、降水、日照等气象因素密切相关。空气污染会削弱人体的呼吸道，并抑制其预防感染的能力，增加对病毒的易感性。
+</font>
+
+<font size=5.5>
+&emsp;&emsp;目前，新型冠状病毒的主要传播途径是呼吸道飞沫和接触传播。湿度、风速等会影响到环境中液滴的稳定性；温度则可能会影响病毒在传播路径上的活性；污染微粒为病毒提供了寄身场所，帮助病毒扩散，进而影响新冠病毒的传播。
+</font>
+
+<font size=5.5>
+&emsp;&emsp;本研究基于武汉市的气象数据、空气污染数据与新型冠状病毒肺炎的发病情况，探索气象因素、大气污染物与COVID-19之间的关系。
+</font>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+# 2 文献综述
+
+
+## 文献综述
+
+<font size=5.5>
+**题目**：An effect assessment of Airborne particulate matter pollution on COVID-19: A multi-city Study in China   
+</font>
+
+<font size=5.5>
+**作者：**Bo Wang, Jiangtao Liu, Shihua Fu, Xiaocheng Xu, Lanyu Li, Yueling Ma, Ji Zhou, Jinxi Yao, Xingrong Liu, Xiuxia Zhang, Xiaotao He, Jun Yan, Yanjun Shi, Xiaowei Ren, Jingping Niu, Bin Luo, Kai zhang    
+</font>
+
+<font size=5.5>
+**目的：**研究空气颗粒物（PM）污染对中国各地COVID-19的影响。
+</font>
+
+<font size=5.5>
+**方法：**利用2020年1月20日至3月2日确诊病例均超过50例的72个城市的数据，建立广义相加模型，通过控制平均温度、绝对湿度和迁移规模指数来估计空气颗粒物污染（PM2.5和PM10）与各城市每日确诊病例之间的关系。      
+</font>
+
+<font size=5.5>
+**结论：**PM2.5、PM10与COVID-19之间存在正相关关系，并且在滞后14天时对COVID-19的影响最大。说明空气中的PM污染可能会增加感染COVID-19的风险。
+</font>
+
+## 文献综述
+
+<font size=5.5>
+**题目：**COVID-19 transmission in Mainland China is associated with temperature and humidity: a time-series analysis
+</font>
+
+<font size=5.5>
+**作者：**Hongchao, Shuang Xiao, Runye Shi, Michael P . Ward, Yue Chen, Wei Tu, Qing Su, Wenge Wang, Xinyi Wang, Zhijie Zhang
+</font>
+
+<font size=5.5>
+**目的：**研究中国30个省份（除西藏外）的气象因素与COVID-19每日病例数之间的相关性。
+</font>
+
+<font size=5.5>
+**方法：**利用2019年12月1日至2020年2月11日的湖北数据，1月20日至2月11日其余省份的数据，通过14天指数移动平均线考虑潜在的滞后效应，建立广义相加模型分析平均气温和相对湿度对每日确诊病例的影响。
+</font>
+
+<font size=5.5>
+**结论：**各省气象因子对COVID-19影响不一致。其中，湖北省的平均气温和相对湿度与COVID-19呈显著负相关；并且平均气温和相对湿度之间存在显著的交互作用。
+</font>
+
+## 文献综述
+
+<font size=5.5>
+**题目：**Effects of temperature variation and humidity on the mortality of COVID-19 in Wuhan
+</font>
+
+<font size=5.5>
+**作者：**Yueling Ma, Yadong Zhao, Jiangtao Liu, Xiaotao He, Bo Wang, Shihua Fu, Jun Y an, Jingping Niu, Bin Luo
+</font>
+
+<font size=5.5>
+**目的：**探讨武汉市新型冠状病毒死亡人数与气象因素之间的关系。
+</font>
+
+<font size=5.5>
+**方法：**收集了2020年1月20日至2020年2月29日中国武汉每天的COVID-19死亡人数、气象和空气污染物数据。然后，使用广义相加模型分析温度、湿度和昼夜温度范围对COVID-19日病死率的影响。
+</font>
+
+<font size=5.5>
+**结论：**    
+ - 日温度范围与COVID-19死亡率呈正相关，而相对湿度与COVID-19死亡率呈负相关。    
+ - 在控制了空气污染等因素的影响后，在滞后3天时，日温度范围每增加1个单位， COVID-19死亡率增加2.92%；在滞后3天和5天时，随着温度和绝对湿度的增加，COVID-19的死亡率降低。
+</font>
+
+## 文献综述
+
+<font size=5.5>
+**题目：**Meteorological factors correlate with transmission of 2019-nCoV: Proof of incidence of novel coronavirus pneumonia in Hubei Province, China
+</font>
+
+<font size=5.5>
+**作者：**Jianfeng Li, Linyuan Zhang, Zhihua Ren, Caihong Xing, Peihuan Qiao, Bing Chang
+</font>
+
+<font size=5.5>
+**目的：**探讨湖北省各种气象因素对COVID-19发病率的影响。
+</font>
+
+<font size=5.5>
+**方法：**收集1月18日截至3月10日的湖北省每日确诊病例和10个气象参数的数据（平均气压、平均气温、最高气温、最低气温、平均水汽压、平均相对湿度、平均风速、降水量、总太阳辐射、最大太阳辐照度）。通过相关分析和线性回归，判断气象因素与COVID-19新增确诊病例之间的关系。
+</font>
+
+<font size=5.5>
+**结论：**    
+ - 湖北省新增确诊病例与平均气压、平均气温、最低气温和平均水汽压这4个气象参数相关。其中，平均压力与增量呈正相关，平均温度、最低温度和平均水汽压则呈现负相关。    
+ - 线性回归结果显示，如果最低温度增加1个单位,湖北新增确诊病例将平均减少72.470个单位。
+</font>
+
+## 文献综述
+
+<font size=5.5>
+**题目：**Meteorological factors and domestic new cases of coronavirus disease (COVID-19) in nine Asian cities: A time-series analysis
+</font>
+
+<font size=5.5>
+**作者：**Zonglin He, Yiqiao Chin, Jian Huang, Yi He, Babatunde O. Akinwunmi, Shinning Yu, Casper JP Zhang, Wai-kit Ming
+</font>
+
+<font size=5.5>
+**目的：**调查亚洲9个城市的气象因素与COVID-19每日新增病例的相关性。（北京、武汉、上海、广州、香港、首尔、东京、吉隆坡和新加坡）
+</font>
+
+<font size=5.5>
+**方法：**采用Pearson相关分析和广义相加模型，评估每日新增COVID-19病例与气象因子（平均气温和相对湿度）之间的关系。
+</font>
+
+<font size=5.5>
+**结论：**不同城市和滞后期的气象因素与COVID-19每日确诊病例数之间的相关性不一致。这表明气象因素不太可能对COVID-19疫情产生重大影响。
+</font>
+
+## 数据来源
+
+<font size=5.5>
+**疫情数据：**来源于[湖北省卫生健康委员会](http://wjw.hubei.gov.cn/)，选取武汉市2020年1月20日至
+
+2020年3月31日的每日确诊病例数和每日死亡病例数。   
+</font>
+
+</br>
+<font size=5.5>
+ **气象数据： **来源于[中国气象数据网](https://data.cma.cn/)，选取武汉市2020年1月1日至2020年
+</font>
+
+<font size=5.5>
+3月31日的每日平均气温、平均相对湿度、日照时数、日温度范围和平均   
+
+风速数据。
+</font>
+
+</br>
+<font size=5.5>
+**空气污染数据：**来源于[PM2.5历史数据](https://www.aqistudy.cn/historydata/)，选取武汉市2020年1月1日至
+
+2020年3月31日的PM2.5、PM10、SO2、CO、NO2和O3数据。
+</font>
