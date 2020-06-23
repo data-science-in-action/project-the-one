@@ -1,0 +1,60 @@
+---
+title: '武汉地区气象数据对新型冠状病毒肺炎疫情的影响分析'
+author: "刘颖 张晓蕊 刘光子 曹雪娇 李雪丽"
+date: '2020-06-26'
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    includes:
+      in_header: preamble.tex
+    number_sections: yes
+fontsize: 12pt
+documentclass: article
+papersize: a5
+---
+# 摘要
+
+**关键词：**
+
+# 1 引言
+
+## 1.1 研究背景
+
+## 1.2 文献综述
+
+# 2 模型介绍
+
+## 2.1 GAM模型
+
+## 2.2 DLNM模型
+
+# 3 描述性统计分析
+
+## 3.1 数据说明
+
+# 4 实证分析
+
+## 4.1 相关分析
+
+## 4.2 气温因素对确诊人数的影响
+
+## 4.3 气温因素对死亡人数的影响
+
+# 5 研究结论
+
+# 6 致谢
+
+## 贡献声明
+
+(1)刘颖：
+
+(2)张晓蕊：
+
+(3)刘光子：
+
+(4)曹雪娇；
+
+(5)李雪丽：
+
+# 参考文献
