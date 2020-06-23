@@ -15,7 +15,7 @@ classoption: "hyperref,"
 ---
 # 摘要
 
-**关键词：**
+**关键词：**COVID-19；GAM模型；DLNM模型；相对危险度
 
 # 1 引言
 
