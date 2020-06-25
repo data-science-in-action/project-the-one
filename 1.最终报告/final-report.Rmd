@@ -178,12 +178,133 @@ WIND|-0.19<br>(0.12)|-0.17<br>(0.17)|-0.20<br>(0.09)|-0.19<br>(0.12)|-0.11<br>(0
 由表4-可知，在研究气象，空气污染指标对不同滞后期当日新增死亡数的相关性之后发现，相关系数显著的指标有PM2.5(0)、SO2(2)、CO(2)、O3(4)、AT(0)、RH(6)、SUN(6)，括号中表示该指标与当日新增确诊数相关性系数达到显著的后期，证明指标PM2.5、SO2、CO、O3、AT、RH、SUN与当日新增死亡数之间存在相关关系，且指标RH与当日新增死亡数为正相关，指标PM2.5、SO2、CO、O3、AT、SUN与与当日新增确诊数为负相关。
 
 ## 4.2 气象因素对确诊人数的影响
+表4为气象因素对确诊人数的影响效应表。由表可知，平均温度通过了显著性检验，而日温度范围和平均相对湿度没有通过检验，说明平均温度对确诊人数有显著影响，日温度范围和相对湿度对确诊人数没有显著影响。
+
+<center>表4 气象因素对确诊人数的影响效应表</center>
+
+|平滑项|估计自由度|参考自由度|F|P|
+|:--:|:--:|:--:|:--:|:--:|
+|$s$(TIME)  | 6.576 | 7.281 |  81.574 | 0.000 ***| 
+|$s$(AT)  | 5.227 | 5.924 |  11.912 | 0.000 ***|   
+|$s$(DTR) | 1.534 | 1.821 | 1.563 | 0.188|
+|$s$(RH) | 1.000| 1.000 | 1.026 | 0.322|   
+
+注：`***`表示在0.001水平下是显著的，`**`表示在0.01水平下是显著的，`*`表示在0.05水平下是显著的。
+
+由图3可知，武汉市新冠肺炎确诊人数随着时间的推移大致呈现先波动变化后下降的趋势；平均温度（AT）对确诊人数的影响呈现先上升后下降的趋势，当AT<10℃时，确诊人数随温度的升高而增加，当AT>10℃时，确诊人数随温度的升高而减少；日温度范围（DTR）和平均相对湿度（RH）对确诊人数的影响效应，基本在0附近呈现一条直线，说明其温度范围和平均相对湿度的变化不会对确诊人数产生明显的影响。
+
+```{r r,message=FALSE,echo = FALSE,warning=FALSE,fig.align = 'center',fig.cap="气象因素与确诊人数的暴露-反应关系图",fig.width=9,fig.height=4}
+
+data<-read.csv('data/GAM.csv')
+
+library(nlme)
+library(mgcv)
+library(dlnm)
+library(splines)
+
+#确诊人数模型
+
+#构建交叉基
+cbPM2.5<-crossbasis(data$PM2.5,lag=c(0,7),argvar=list(fun="lin"),arglag=list(fun="integer"))
+cbSO2<-crossbasis(data$SO2,lag=c(0,7),argvar=list(fun="lin"),arglag=list(fun="integer"))
+cbO3<-crossbasis(data$O3,lag=c(0,7),argvar=list(fun="lin"),arglag=list(fun="integer"))
+
+model1<-gam(DIAG~ s(TIME)+cbPM2.5+cbSO2+cbO3+s(AT)+s(DTR)+s(RH)+as.factor(DOW),family=quasipoisson,data=data)
+
+par(mfrow=c(2,2)) 
+plot(model1)
+
+```
+
+### 4.2.2 气象因素交互作用对死亡人数的影响
+
+表5为气象因素交互作用对死亡人数的影响效应。平均温度和日温度范围的交互作用、日温度范围和相对湿度的交互作用对确诊人数有显著影响；而平均温度与相对湿度的交互作用对确诊人数没有显著影响。
+
+<center>表5 气象因素交互作用对确诊人数的影响效应表</center>
+
+|平滑项|估计自由度|参考自由度| F | P| 
+|:--:|:--:|:--:|:--:|:--:|
+|$s$(AT,DTR) | 18.10 | 20.763 |  1.996 | 0.0295 *|    
+|$s$(DTR,RH) | 23.973 | 25.829 | 10.55 | 0.000 ***|
+|$s$(AT,RH) | 8.214 | 10.932 | 0.678 | 0.747
+        
+注：`***`表示在0.001水平下是显著的，`**`表示在0.01水平下是显著的，`*`表示在0.05水平下是显著的。
+    
+图4为气象因素交互作用对确诊人数影响的三维分布图。平均温度大约在13℃，日温度范围最大时，其交互作用对确诊人数的影响最小；平均温度最小和日温度范围最小时，交互作用对确诊人数的影响最大。相对湿度大约在77%，日温度范围最大时，对确诊人数的影响最小；相对湿度大约在82%，日温度范围最小时，交互作用对确诊人数的影响最大。 
+
+```{r,message=FALSE,echo = FALSE,warning=FALSE,fig.align = 'center', fig.cap="气象因素交互作用与确诊人数的三维图",fig.width=9,fig.height=4}
+
+#交互作用对确诊人数的影响，其中（AT,RH）不显著
+model2<-gam(DIAG~ s(TIME)+PM2.5+SO2+O3+s(AT,DTR)+as.factor(DOW),family=quasipoisson,data=data)
+model3<-gam(DIAG~ s(TIME)+PM2.5+SO2+O3+s(DTR,RH)+as.factor(DOW),family=quasipoisson,data=data)
+model4<-gam(DIAG~ s(TIME)+PM2.5+SO2+O3+s(AT,RH)+as.factor(DOW),family=quasipoisson,data=data)
+
+par(mfrow=c(1,2)) 
+#绘制二维图，mgcv包里有vis.gam的具体教程
+vis.gam(model2,view = c("AT", "DTR"),ticktype="detailed",color="heat",theta=-150)
+vis.gam(model3,view = c("DTR", "RH"),ticktype="detailed",color="heat",theta=125)
+
+```
+
+图5为不用滞后期的气象因素对武汉市每日确诊人数影响的$RR$值及95%$CI$。平均温度（AT）在滞后0，1，2，4，5和7天时，会增加新冠肺炎的发病风险，并且在滞后7天时对确诊人数的影响效应最大，相对危险度是18.101。日温度范围（DTR）在滞后2，3，5和6天时，会增加新冠肺炎的发病风险，并且在滞后5天时对确诊人数的影响效应最大，相对危险度是4.811。平均相对湿度（RH）在滞后1，2，3，5和7天时，会增加新冠肺炎的发病风险，并且在滞后5天时对确诊人数的影响效应最大，相对危险度是3.576。
+
+```{r,message=FALSE,echo = FALSE,warning=FALSE,fig.align = 'center',fig.cap="气象因素对确诊人数影响的$RR$值及95%$CI$",fig.width=9,fig.height=4}
+
+#气象对确诊人数的滞后
+cbAT <- crossbasis(data$AT, lag=c(0,7), argvar=list(fun="lin"),arglag=list(fun="integer"))
+cbDTR <- crossbasis(data$DTR, lag=c(0,7), argvar=list(fun="lin"),arglag=list(fun="integer"))
+cbRH <- crossbasis(data$RH, lag=c(0,7), argvar=list(fun="lin"),arglag=list(fun="integer"))
+
+model5<-gam(DIAG~ cbAT+cbDTR+cbRH+s(TIME)+s(PM2.5)+s(SO2)+s(O3)+as.factor(DOW),data=data,family=quasipoisson)
+
+par(mfrow=c(1,3))
+#AT
+pred1.AT<-crosspred(cbAT,model5,at = 1)
+plot(pred1.AT,var=1,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of AT",ylab="RR(95%CI)") 
+
+#DTR
+pred1.DTR<-crosspred(cbDTR,model5,at = 1)
+plot(pred1.DTR,var=1,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of DTR",ylab="RR(95%CI)") 
+
+#RH
+pred1.RH<-crosspred(cbRH,model5,at = 1)
+plot(pred1.RH,var=1,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of RH",ylab="RR(95%CI)") 
+
+```
+
+图6为不用滞后期的空气污染物对武汉市每日确诊人数影响的$RR$值及95%$CI$。PM2.5在滞后2-5天和滞后7天时，会增加新冠肺炎的发病风险，并且在滞后3天时对确诊人数的影响效应最大，相对危险度是1.246。SO2在滞后0-6天时，会增加新冠肺炎的发病风险，并且在滞后2天时对确诊人数的影响效应最大，相对危险度是10.877。O3在滞后0，1和7天时，会增加新冠肺炎的发病风险，并且在滞后1天时对确诊人数的影响效应最大，相对危险度是1.069。
+
+
+```{r,message=FALSE,echo = FALSE,warning=FALSE,fig.align = 'center',fig.cap="空气污染物对确诊人数影响的$RR$及95%$CI$",fig.width=,fig.height=4}
+
+cbPM2.5<-crossbasis(data$PM2.5,lag=c(0,7),argvar=list(fun="lin"),arglag=list(fun="integer"))
+cbSO2<-crossbasis(data$SO2,lag=c(0,7),argvar=list(fun="lin"),arglag=list(fun="integer"))
+cbO3<-crossbasis(data$O3,lag=c(0,7),argvar=list(fun="lin"),arglag=list(fun="integer"))
+
+model1<-gam(DIAG~ s(TIME)+cbPM2.5+cbSO2+cbO3+s(AT)+s(DTR)+s(RH)+as.factor(DOW),family=quasipoisson,data=data)
+
+par(mfrow=c(1,3)) 
+#PM2.5绘图
+pred1.PM2.5<-crosspred(cbPM2.5,model1,at=10)
+plot(pred1.PM2.5,var=10,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of PM2.5 ",ylab="RR(95%CI)")
+#SO2绘图
+pred1.SO2<-crosspred(cbSO2,model1,at = 10)
+plot(pred1.SO2,var=10,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of SO2",ylab="RR(95%CI)") 
+#O3绘图
+pred1.O3<-crosspred(cbO3,model1,at = 10)
+plot(pred1.O3,var=10,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of O3",ylab="RR(95%CI)")
+
+```
 
 ## 4.3 气象因素对死亡人数的影响
 
-## 4.3 气象因素对死亡人数的影响
-
-表 ：气象因素对死亡人数的影响
+表6 气象因素对死亡人数的影响
 | 平滑 项| 估计自由度 | 参考自由度 | F | p |
 |:----------:|:----------:|:----------:|:----------:|:----------:|
 | s(TIME) | 4.745 | 5.631 | 43.531 | 0.000*** |
@@ -221,7 +342,7 @@ plot(model6)
 
 ### 气象因素交互作用对死亡人数的影响：
 
-表 ；气象交互做用对死亡人数的影响
+表7 气象交互做用对死亡人数的影响
 
 | 平滑项 | 估计自由度 | 参考自由度 | F | p |
 |:--:|:--:|:--:|:--:|:--:|
