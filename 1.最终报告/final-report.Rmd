@@ -181,7 +181,140 @@ WIND|-0.19<br>(0.12)|-0.17<br>(0.17)|-0.20<br>(0.09)|-0.19<br>(0.12)|-0.11<br>(0
 
 ## 4.3 气象因素对死亡人数的影响
 
+## 4.3 气象因素对死亡人数的影响
+
+表 ：气象因素对死亡人数的影响
+| 平滑 项| 估计自由度 | 参考自由度 | F | p |
+|:----------:|:----------:|:----------:|:----------:|:----------:|
+| s(TIME) | 4.745 | 5.631 | 43.531 | 0.000*** |
+| s(AT) | 8.646 | 8.918 | 3.790 | 0.006** |
+| s(SUN) | 1.312 | 1.504 | 3.331 | 0.039* |
+| s(RH) | 3.155 | 3.909 | 3.618 | 0.026* |
+注：`***`表示在0.001水平下是显著的，`**`表示在0.01水平下是显著的，`*`表示在0.05水平下是显著的。
+
+从上表可以得出,平均温度（AT)、日照时间（SUN）与相对湿度（RH）都通过了显著性检验，说明这些气象因素对新冠肺炎的死亡都有影响。
+
+``````{r, fig.cap="图 气象因素的暴露反应关系图", fig.width=9,fig.height=4,echo = FALSE, message=FALSE}
+setwd("C:\\Users\\17272\\Desktop\\git")
+data<-read.csv("GAM.csv")
+library(dlnm)
+library(mgcv)
+library(splines)
+
+cbPM2.5<-crossbasis(data$PM2.5,lag=c(0,7),argvar=list(fun="lin"),arglag=list(fun="integer"))
+cbSO2<-crossbasis(data$SO2,lag=c(0,7),argvar=list(fun="lin"),arglag=list(fun="integer"))
+cbO3<-crossbasis(data$O3,lag=c(0,7),argvar=list(fun="lin"),arglag=list(fun="integer"))
+
+model6<-gam(DEATH~ s(TIME)+cbPM2.5+cbSO2+cbO3+s(AT)+s(SUN)+s(RH)+as.factor(DOW),family=quasipoisson,data=data)
+
+par(mfrow=c(2,2)) 
+plot(model6)
+```
+
+从上图可以看出，死亡人数随时间变化的趋势成“倒V”型，前25天呈现上升趋势，之后呈现下降趋势。新冠疫情刚刚发现，医疗设施以及医护人员不足，公民的防护以及处理方法不当，以及一些心里的恐慌等，死亡人数直线上升。到后来一些驰援湖北医护人员以及方仓医院的建立，治愈人数增多，并且各地陆续驰援湖北，使得死亡人数在逐渐下降。
+
+平均温度（AT）对死亡人数的影响呈现上下波动的趋势，波动趋势相对比较平缓，鉴于这个趋势的特殊性，分析可能中间因为各种政策因素或者是医疗设施或者是医务人员的调动等对死亡人数的影响造成了这样的结果。
+
+日照时长（SUN）对新冠肺炎的影响呈现下降的趋势，日照时间越长，死亡人数下降。
+
+平均相对湿度（RH）对死亡的影响基本也是呈现下降的趋势，随着湿度的增加，死亡人数下降。
+
+### 气象因素交互作用对死亡人数的影响：
+
+表 ；气象交互做用对死亡人数的影响
+
+| 平滑项 | 估计自由度 | 参考自由度 | F | p |
+|:--:|:--:|:--:|:--:|:--:|
+S(AT,SUN)|6.279|7.196|94.871|0.000***|
+S(AT,RH)|13.514|17,43|3.069|0.001***|
+S(RH,SUN)|7.765|10.437|2.355|0.020***|
+注：`***`表示在0.001水平下是显著的，`**`表示在0.01水平下是显著的，`*`表示在0.05水平下是显著的。
+
+从上表可以看出，平均温度与日照时长交互作用S(AT,SUM)，平均温度与相对湿度的交互作用S(AT,RH)，相对湿度与日照时长S(RH,SUN)对死亡人数的影响都显著。
+
+``````{r, fig.align='center', fig.cap="图 气象交互作用对死亡人数影响效应的三维图",fig.width=9,fig.height=4, echo = FALSE, message=FALSE}
+
+setwd("C:\\Users\\17272\\Desktop\\git")
+data<-read.csv("GAM.csv")
+library(dlnm)
+library(mgcv)
+library(splines)
+
+model7<-gam(DEATH~ s(TIME)+PM2.5+SO2+O3+s(AT,SUN)+as.factor(DOW),family=quasipoisson,data=data)
+model8<-gam(DEATH~ s(TIME)+PM2.5+SO2+O3+s(AT,RH)+as.factor(DOW),family=quasipoisson,data=data)
+model9<-gam(DEATH~ s(TIME)+PM2.5+SO2+O3+s(RH,SUN)+as.factor(DOW),family=quasipoisson,data=data)
+
+par(mfrow=c(1,3)) 
+vis.gam(model7,view = c("AT", "SUN"),ticktype="detailed",color="heat",theta=-35)
+vis.gam(model8,view = c("AT", "RH"),ticktype="detailed",color="heat",theta=-35)
+vis.gam(model9,view = c("RH", "SUN"),ticktype="detailed",color="heat",theta=-130)
+```
+
+从上图可以得出，平均温度与日照时长对死亡人数的交互效果图中可以看出，在平均温度最低，日照时长最大时对死亡人数的影响最小；在日照最低，平均温度最高的时候对死亡人数的影响最大。但是总体上呈现一个上下波动的关系，大概日照时长为1.9左右与平均温度大概15左右的交互作用对死亡的影响也相对较小。
+
+平均温度与相对湿度的交互作用对新冠肺炎死亡人数的影响相较前边交互的影响比较平缓，波动点没有那么多，波动幅度比较大，平均温度最小，相对湿度大约为73的时候，交互作用对死亡人数的影响最小；平均温度最大相对湿度最小的时候对死亡人数的影响最小。
+
+相对湿度与日照时长的交互做用对死亡人数的影响趋势明显，没有那么多的波动点，相对湿度大约为73%，日照时长最大的时候对死亡人数的影响最小；相对湿度最大，日照时长最小的时候对死亡人数的影响最大；并且从明显的趋势可以看出，湿度越小，死亡人越多，日照时长越长，死亡人数越少。这与前边的暴露反应关系的结果一致。
+
+### 气象因素对死亡人数的滞后影响（RR及95%CI）
+
+
+``````{r, fig.align = 'center', fig.cap = "图 气象滞后效应图", echo = FALSE, message=FALSE,fig.width=9,fig.height=4}
+
+setwd("C:\\Users\\17272\\Desktop\\git")
+data<-read.csv("GAM.csv")
+library(dlnm)
+library(mgcv)
+library(splines)
+
+cbAT <- crossbasis(data$AT, lag=c(0,7), argvar=list(fun="lin"),arglag=list(fun="integer"))
+cbRH <- crossbasis(data$RH, lag=c(0,7), argvar=list(fun="lin"),arglag=list(fun="integer"))
+cbSUN <- crossbasis(data$SUN, lag=c(0,7), argvar=list(fun="lin"),arglag=list(fun="integer"))
+
+model<-gam(DEATH~cbAT+cbRH+cbSUN+s(PM2.5)+s(SO2)+s(O3)+s(TIME)+as.factor(DOW),data=data,family=quasipoisson)
+par(mfrow=c(1,3))
+#AT
+pred1.AT<-crosspred(cbAT,model,at = 1)
+plot(pred1.AT,var=1,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of AT",ylab="RR(95%CI)") 
+#RH
+pred1.RH<-crosspred(cbRH,model,at = 1)
+plot(pred1.RH,var=1,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of RH",ylab="RR(95%CI)") 
+#SUN
+pred1.SUN<-crosspred(cbSUN,model,at = 1)
+plot(pred1.SUN,var=1,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of SUN",ylab="RR(95%CI)")
+```
+
+从上图可以直观的看出，平均温度（AT）在滞后一天时，会增加新冠肺炎死亡的风险；相对湿度（RH）在滞后1-3天以及6-7天时，会增加新冠肺炎死亡的风险，并且在滞后1天时，对新冠肺炎死亡的影响最大；日照时长（SUN）在滞后3天、7天的时候，会增加新冠肺炎死亡的风险，并且在滞后3天的时候对新冠肺炎死亡的影响最大。
+
+### 空气污染物对死亡人数的滞后影响（RR及95%CI）
+
+
+```{r,fig.align='center',fig.cap = "图  空气污染物滞后效应图",fig.width=9,fig.height=4,message=FALSE,echo = FALSE}
+setwd("C:\\Users\\17272\\Desktop\\git")
+data<-read.csv("GAM.csv")
+library(dlnm)
+library(mgcv)
+library(splines)
+
+model10<-gam(DEATH~ s(TIME)+cbPM2.5+cbSO2+cbO3+s(AT)+s(SUN)+s(RH)+as.factor(DOW),family=quasipoisson,data=data)
+par(mfrow=c(1,3))
+pred2.PM2.5<-crosspred(cbPM2.5,model10,at = 10)
+plot(pred2.PM2.5,var=10,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of PM2.5",ylab="RR(95%CI)") 
+pred2.SO2<-crosspred(cbSO2,model10,at = 10)
+plot(pred2.SO2,var=10,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of SO2",ylab="RR(95%CI)") 
+pred2.O3<-crosspred(cbO3,model10,at = 10)
+plot(pred2.O3,var=10,type="p",ci="bars",col=2,pch=19,
+     xlab="Lag Days of O3",ylab="RR(95%CI)") 
+```
 # 5 研究结论
+
+气象滞后对确诊与死亡的影响都不同。平均温度（AT）滞后7天、日温度范围（DTR）滞后5天以及相对湿度（RH）滞后5天时对确诊人数的影响最大；平均温度（AT）滞后1天、日照时长（SUN）滞后3天以及相对湿度（RH）滞后1天时对确诊人数的影响最大。
+大气污染对确诊与死亡人数的影响也不同。PM2.5滞后3天、SO2滞后2天以及O3滞后1天时对确认人数的影响最大；PM2.5无滞后、SO2滞后6天以及O3滞后5天时对确认人数的影响最大。
 
 # 6 致谢
 
