@@ -1,6 +1,6 @@
 ## 1.final-report文件夹
 
-存放最终论文用到的数据、代码、rmd文件和pdf文件
+存放最终论文用到的数据、rmd文件和pdf文件
 
 ## 2.final-presentation文件夹
 
